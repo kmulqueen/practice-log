@@ -7,11 +7,17 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     max: dbConfig.pool.max,
     min: dbConfig.pool.min,
     acquire: dbConfig.pool.acquire,
-    idle: dbConfig.pool.idle
-  }
+    idle: dbConfig.pool.idle,
+  },
 });
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.instruments = require("./instrument.model.js")(sequelize, Sequelize);
+db.instruments = require("./instrumentModel.js")(sequelize, Sequelize);
+db.goals = require("./goalModel.js")(sequelize, Sequelize);
+db.practiceItems = require("./practiceItemModel.js")(sequelize, Sequelize);
+
+// Associations
+db.goals.hasMany(db.practiceItems);
+db.practiceItems.belongsTo(db.goals);
 module.exports = db;
