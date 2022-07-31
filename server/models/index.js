@@ -16,8 +16,11 @@ db.sequelize = sequelize;
 db.instruments = require("./instrumentModel.js")(sequelize, Sequelize);
 db.goals = require("./goalModel.js")(sequelize, Sequelize);
 db.practiceItems = require("./practiceItemModel.js")(sequelize, Sequelize);
+db.users = require("./userModel.js")(sequelize, Sequelize);
 
 // Associations
 db.goals.hasMany(db.practiceItems);
 db.practiceItems.belongsTo(db.goals);
+db.users.hasMany(db.goals);
+db.goals.belongsTo(db.users);
 module.exports = db;

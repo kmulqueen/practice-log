@@ -24,6 +24,11 @@ module.exports = (sequelize, Sequelize) => {
     tags: {
       type: Sequelize.ARRAY(Sequelize.STRING),
     },
+    userId: {
+      type: Sequelize.INTEGER,
+      required: true,
+      allowNull: false,
+    },
   });
   return Goal;
 };
