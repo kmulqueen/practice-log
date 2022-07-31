@@ -4,20 +4,42 @@ const Op = db.Sequelize.Op;
 
 // CREATE
 exports.create = async (req, res) => {
-  if (!req.body.name) {
-    res.status(400).send({
-      message: "Name can not be empty!",
+  const { name, userId, targetTempo, targetDuration, tags } = req.body;
+  if (!name) {
+    return res.status(400).json({
+      message: "Name can not be empty.",
     });
-    return;
+  }
+
+  if (!userId) {
+    return res.status(400).json({
+      message: "UserId can not be empty.",
+    });
+  }
+
+  // Check that userID is valid
+  const userExists = await db.users.findOne({
+    where: { id: parseInt(userId) },
+    attributes: ["id"],
+  });
+
+  if (userExists === null) {
+    return res.status(400).json({
+      message: "Invalid userId",
+    });
   }
   const newGoal = {
-    name: req.body.name,
+    name,
+    userId: parseInt(userId),
+    targetTempo,
+    targetDuration,
+    tags,
   };
   try {
     const goal = await Goal.create(newGoal);
-    res.status(201).send(goal);
+    res.status(201).json(goal);
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message:
         error.message || "Server error occurred while creating the goal.",
     });
@@ -31,14 +53,14 @@ exports.findAll = async (req, res) => {
   try {
     const goals = await Goal.findAll({ where: condition });
     if (goals.length) {
-      res.status(200).send(goals);
+      res.status(200).json(goals);
     } else {
-      res.status(404).send({
+      res.status(404).json({
         message: "No goals found.",
       });
     }
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: error.message || "Server error occurred while retrieving Goals.",
     });
   }
@@ -49,11 +71,11 @@ exports.findById = async (req, res) => {
   const id = parseInt(req.params.id);
   const goal = await Goal.findOne({ where: { id: id } });
   if (goal === null) {
-    res.status(404).send({
+    res.status(404).json({
       message: "Goal not found!",
     });
   } else {
-    res.status(200).send(goal);
+    res.status(200).json(goal);
   }
 };
 

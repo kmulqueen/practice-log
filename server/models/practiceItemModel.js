@@ -12,9 +12,6 @@ module.exports = (sequelize, Sequelize) => {
     tempo: {
       type: Sequelize.INTEGER,
     },
-    targetTempo: {
-      type: Sequelize.INTEGER,
-    },
     duration: {
       type: Sequelize.STRING,
     },
@@ -22,6 +19,11 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.ARRAY(Sequelize.STRING),
     },
     goalId: {
+      type: Sequelize.INTEGER,
+      required: true,
+      allowNull: false,
+    },
+    userId: {
       type: Sequelize.INTEGER,
       required: true,
       allowNull: false,

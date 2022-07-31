@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // CREATE
 exports.create = async (req, res) => {
   if (!req.body.name) {
-    res.status(400).send({
+    res.status(400).json({
       message: "Name can not be empty!",
     });
     return;
@@ -15,9 +15,9 @@ exports.create = async (req, res) => {
   };
   try {
     const instrument = await Instrument.create(newInstrument);
-    res.status(201).send(instrument);
+    res.status(201).json(instrument);
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message:
         error.message || "Server error occurred while creating the instrument.",
     });
@@ -31,14 +31,14 @@ exports.findAll = async (req, res) => {
   try {
     const instruments = await Instrument.findAll({ where: condition });
     if (instruments.length) {
-      res.status(200).send(instruments);
+      res.status(200).json(instruments);
     } else {
-      res.status(404).send({
+      res.status(404).json({
         message: "No instruments found.",
       });
     }
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message:
         error.message || "Server error occurred while retrieving Instruments.",
     });
@@ -50,11 +50,11 @@ exports.findById = async (req, res) => {
   const id = parseInt(req.params.id);
   const instrument = await Instrument.findOne({ where: { id: id } });
   if (instrument === null) {
-    res.status(404).send({
+    res.status(404).json({
       message: "Instrument ID not found.",
     });
   } else {
-    res.status(200).send(instrument);
+    res.status(200).json(instrument);
   }
 };
 // Update a Instrument by the id in the request

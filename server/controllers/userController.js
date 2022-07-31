@@ -8,12 +8,12 @@ const generateToken = require("../utils/generateToken");
 exports.create = async (req, res) => {
   const { username, password } = req.body;
   if (!username) {
-    return res.status(400).send({
+    return res.status(400).json({
       message: "Userame can not be empty!",
     });
   }
   if (!password) {
-    return res.status(400).send({
+    return res.status(400).json({
       message: "Password can not be empty!",
     });
   }
@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
   try {
     const userExists = await User.findOne({ where: { username: username } });
     if (userExists) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: "User with that username already exists.",
       });
     } else {
@@ -36,19 +36,19 @@ exports.create = async (req, res) => {
       const user = await User.create(newUser);
 
       if (user) {
-        return res.status(201).send({
+        return res.status(201).json({
           id: user.id,
           username: user.username,
           token: generateToken(user.id),
         });
       } else {
-        return res.status(400).send({
+        return res.status(400).json({
           message: "Invalid user data.",
         });
       }
     }
   } catch (error) {
-    return res.status(500).send({
+    return res.status(500).json({
       message:
         error.message || "Server error occurred while creating the user.",
     });
@@ -63,18 +63,18 @@ exports.authenticateUser = async (req, res) => {
   if (user) {
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
-      return res.send({
+      return res.json({
         id: user.id,
         username: user.username,
         token: generateToken(user.id),
       });
     } else {
-      res.status(401).send({
+      res.status(401).json({
         message: "Invalid login credentials.",
       });
     }
   } else {
-    res.status(404).send({
+    res.status(404).json({
       message: "User not found.",
     });
   }
@@ -92,14 +92,14 @@ exports.findAll = async (req, res) => {
       attributes: ["id", "username", "createdAt", "updatedAt"],
     });
     if (users.length) {
-      return res.status(200).send(users);
+      return res.status(200).json(users);
     } else {
-      return res.status(404).send({
+      return res.status(404).json({
         message: "No users found.",
       });
     }
   } catch (error) {
-    return res.status(500).send({
+    return res.status(500).json({
       message: error.message || "Server error occurred while retrieving Users.",
     });
   }
@@ -110,11 +110,11 @@ exports.findById = async (req, res) => {
   const id = parseInt(req.params.id);
   const user = await User.findOne({ where: { id: id } });
   if (user === null) {
-    res.status(404).send({
+    res.status(404).json({
       message: "User not found!",
     });
   } else {
-    res.status(200).send(user);
+    res.status(200).json(user);
   }
 };
 

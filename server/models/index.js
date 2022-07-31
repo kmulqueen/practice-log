@@ -20,7 +20,7 @@ db.users = require("./userModel.js")(sequelize, Sequelize);
 
 // Associations
 db.goals.hasMany(db.practiceItems);
-db.practiceItems.belongsTo(db.goals);
 db.users.hasMany(db.goals);
 db.goals.belongsTo(db.users);
+db.users.hasMany(db.practiceItems);
 module.exports = db;
