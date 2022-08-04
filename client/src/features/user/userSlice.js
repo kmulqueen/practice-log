@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { loginUser } from "./userActions";
 
 export const userSlice = createSlice({
   name: "user",
@@ -6,9 +7,12 @@ export const userSlice = createSlice({
     username: "",
     id: null,
   },
-  reducers: {
-    login: (state, action) => {
-      state = action.payload;
+  reducers: {},
+  extraReducers: {
+    // LOGIN
+    [loginUser.fulfilled]: (state, { payload }) => {
+      state.username = payload.username;
+      state.id = payload.id;
     },
   },
 });

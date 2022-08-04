@@ -1,7 +1,15 @@
-import React from "react";
+import { Heading } from "grommet";
+import PageWrapper from "../../components/PageWrapper/PageWrapper";
 
 const HomePage = () => {
-  return <h1>Home Page</h1>;
+  return (
+    <>
+      <PageWrapper />
+      <Heading level={1} size="small">
+        Home Page
+      </Heading>
+    </>
+  );
 };
 
 export default HomePage;

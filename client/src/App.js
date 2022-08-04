@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { PrivateRoute } from "./components/PrivateRoute/PrivateRoute";
 
 // Pages
 import LoginPage from "./pages/login/LoginPage";
@@ -13,13 +14,25 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/session/:id" exact element={<ViewSessionPage />} />
-        <Route path="/createsession" exact element={<CreateSessionPage />} />
-        <Route path="/goals/view/:id" exact element={<ViewGoalPage />} />
-        <Route path="/goals/view" exact element={<ViewAllGoalsPage />} />
-        <Route path="/goals/create" exact element={<CreateGoalPage />} />
+        <Route path="/session/:id" exact element={<PrivateRoute />}>
+          <Route path="/session/:id" element={<ViewSessionPage />} />
+        </Route>
+        <Route path="/createsession" exact element={<PrivateRoute />}>
+          <Route path="/createsession" element={<CreateSessionPage />} />
+        </Route>
+        <Route path="/goals/view/:id" exact element={<PrivateRoute />}>
+          <Route path="/goals/view/:id" element={<ViewGoalPage />} />
+        </Route>
+        <Route path="/goals/view" exact element={<PrivateRoute />}>
+          <Route path="/goals/view" element={<ViewAllGoalsPage />} />
+        </Route>
+        <Route path="/goals/create" exact element={<PrivateRoute />}>
+          <Route path="/goals/create" element={<CreateGoalPage />} />
+        </Route>
         <Route path="/login" exact element={<LoginPage />} />
-        <Route path="/" exact element={<HomePage />} />
+        <Route path="/" exact element={<PrivateRoute />}>
+          <Route path="/" element={<HomePage />} />
+        </Route>
       </Routes>
     </Router>
   );
