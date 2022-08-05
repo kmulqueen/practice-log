@@ -1,9 +1,21 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { Box, Button, Heading, Text } from "grommet";
+import { useSelector, useDispatch } from "react-redux";
+import { Box, Button, Heading } from "grommet";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../features/user/userActions";
 
 function AppHeader() {
   const user = useSelector((state) => state.user);
+  const nav = useNavigate();
+  const dispatch = useDispatch();
+
+  function handleClick(e) {
+    e.stopPropagation();
+    if (user.id !== null) {
+      dispatch(logoutUser());
+    }
+    nav("/login");
+  }
 
   return (
     <Box
@@ -20,9 +32,9 @@ function AppHeader() {
         Practice Log
       </Heading>
       {user.id ? (
-        <Text>Hello, {user.username}</Text>
+        <Button primary label="Logout" onClick={(e) => handleClick(e)} />
       ) : (
-        <Button primary label="Login" />
+        <Button primary label="Login" onClick={(e) => handleClick(e)} />
       )}
     </Box>
   );

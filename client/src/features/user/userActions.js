@@ -16,6 +16,7 @@ export const loginUser = createAsyncThunk(
         { username, password },
         config
       );
+      localStorage.setItem("practicelog_userInfo", JSON.stringify(res.data));
       return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -26,3 +27,8 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+
+export const logoutUser = createAsyncThunk("user/logout", () => {
+  localStorage.removeItem("practicelog_userInfo");
+  return { username: "", id: null, token: "" };
+});

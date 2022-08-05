@@ -2,14 +2,14 @@ import React from "react";
 import PageWrapper from "../../components/PageWrapper/PageWrapper";
 import { Heading } from "grommet";
 
-function ViewAllGoalsPage() {
+function ViewAllSessionsPage() {
   return (
     <PageWrapper>
       <Heading level={1} size="small">
-        All Goals
+        All Practice Sessions
       </Heading>
     </PageWrapper>
   );
 }
 
-export default ViewAllGoalsPage;
+export default ViewAllSessionsPage;
