@@ -21,3 +21,7 @@ export const sizePad = {
   large: "large",
   xlarge: "xlarge",
 };
+
+export const formStyle = {
+  width: "50%",
+};

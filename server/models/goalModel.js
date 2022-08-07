@@ -11,12 +11,14 @@ module.exports = (sequelize, Sequelize) => {
     },
     dateCompleted: {
       type: Sequelize.DATE,
+      allowNull: true,
     },
     targetTempo: {
       type: Sequelize.INTEGER,
     },
     totalDuration: {
       type: Sequelize.STRING,
+      allowNull: true,
     },
     targetDuration: {
       type: Sequelize.STRING,

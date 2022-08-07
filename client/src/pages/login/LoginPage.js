@@ -11,18 +11,7 @@ import {
 } from "grommet";
 import PageWrapper from "../../components/PageWrapper/PageWrapper";
 import { loginUser } from "../../features/user/userActions";
-
-const formStyle = {
-  width: "50%",
-};
-
-const pad = {
-  xsmall: "medium",
-  small: "medium",
-  medium: "large",
-  large: "xlarge",
-  xlarge: "xlarge",
-};
+import { formStyle, largePad } from "../../styles/utils";
 
 function LoginPage() {
   const size = useContext(ResponsiveContext);
@@ -41,7 +30,7 @@ function LoginPage() {
 
   return (
     <PageWrapper>
-      <Box pad={pad[size]} direction="row" justify="center">
+      <Box pad={largePad[size]} direction="row" justify="center">
         <Form
           onChange={(nextValue) => setValue(nextValue)}
           value={value}
