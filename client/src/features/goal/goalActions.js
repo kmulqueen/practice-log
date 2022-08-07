@@ -33,3 +33,25 @@ export const resetGoalSubmissionStatus = createAsyncThunk(
     return "";
   }
 );
+
+export const getUserGoals = createAsyncThunk(
+  "goal/findUserGoals",
+  async (userId, { getState }) => {
+    try {
+      const { user } = getState();
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const res = await axios.get(`/api/goals/user/${userId}`, config);
+      return res.data;
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return error.response.data.message;
+      } else {
+        return error.message;
+      }
+    }
+  }
+);

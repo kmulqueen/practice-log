@@ -1,13 +1,5 @@
 import React, { useContext } from "react";
-import {
-  Box,
-  Button,
-  Heading,
-  Layer,
-  Paragraph,
-  ResponsiveContext,
-  Text,
-} from "grommet";
+import { Box, Button, Heading, Layer, ResponsiveContext, Text } from "grommet";
 import { Alert, Checkmark, CircleInformation, FormClose } from "grommet-icons";
 import PropTypes from "prop-types";
 
@@ -45,7 +37,7 @@ function Modal({ heading, subtitle, content, footer, status, onClose }) {
           </Box>
           {subtitle && <Text size="small">{subtitle}</Text>}
           <Box overflow="auto" pad={{ vertical: "medium" }}>
-            <Paragraph margin="none">{content}</Paragraph>
+            {content}
           </Box>
         </Box>
         {footer.length ? (
@@ -75,7 +67,7 @@ function Modal({ heading, subtitle, content, footer, status, onClose }) {
 Modal.propTypes = {
   heading: PropTypes.string.isRequired,
   subtitle: PropTypes.string,
-  content: PropTypes.string.isRequired,
+  content: PropTypes.element.isRequired,
   footer: PropTypes.string,
   status: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,

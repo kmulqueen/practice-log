@@ -1,3 +1,4 @@
+const e = require("cors");
 const db = require("../models");
 const Goal = db.goals;
 const Op = db.Sequelize.Op;
@@ -76,6 +77,35 @@ exports.findById = async (req, res) => {
     });
   } else {
     res.status(200).json(goal);
+  }
+};
+
+// FIND ALL GOALS BY USER ID
+exports.findUserGoals = async (req, res) => {
+  const userId = parseInt(req.params.userId);
+  const user = await db.users.findOne({ where: { id: userId } });
+  if (user === null) {
+    return res.status(404).json({
+      message: "User not found.",
+    });
+  } else {
+    try {
+      const goals = await Goal.findAll({ where: { userId } });
+
+      if (!goals.length) {
+        return res.status(404).json({
+          message: "No goals found for user.",
+        });
+      } else {
+        return res.status(200).json(goals);
+      }
+    } catch (error) {
+      res.status(500).json({
+        message:
+          error.message ||
+          "Server error occurred while retrieving user's goals.",
+      });
+    }
   }
 };
 

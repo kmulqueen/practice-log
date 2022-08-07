@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createGoal, resetGoalSubmissionStatus } from "./goalActions";
+import {
+  createGoal,
+  resetGoalSubmissionStatus,
+  getUserGoals,
+} from "./goalActions";
 
 export const goalSlice = createSlice({
   name: "goal",
@@ -13,6 +17,7 @@ export const goalSlice = createSlice({
     totalDuration: "0 days",
     tags: [],
     status: "",
+    userGoals: [],
   },
   reducers: {},
   extraReducers: {
@@ -29,6 +34,17 @@ export const goalSlice = createSlice({
     // RESET SUBMISSION STATUS
     [resetGoalSubmissionStatus.fulfilled]: (state, { payload }) => {
       state.status = payload;
+    },
+    // GET USER GOALS
+    [getUserGoals.pending]: (state) => {
+      state.status = "pending";
+    },
+    [getUserGoals.fulfilled]: (state, { payload }) => {
+      state.status = "retrieved";
+      state.userGoals = payload;
+    },
+    [getUserGoals]: (state) => {
+      state.status = "error";
     },
   },
 });

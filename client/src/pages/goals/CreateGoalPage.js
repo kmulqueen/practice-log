@@ -50,6 +50,7 @@ function CreateGoalPage() {
     status: "",
     footer: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -112,7 +113,7 @@ function CreateGoalPage() {
       setModalInfo({
         heading: "Missing field!",
         subtitle: "Field: Goal Name",
-        content: "Please enter a value for goal name.",
+        content: <Text>Please enter a value for goal name.</Text>,
         status: "critical",
         footer: "",
       });
@@ -123,7 +124,11 @@ function CreateGoalPage() {
       setModalInfo({
         heading: "Invalid field!",
         subtitle: "Field: Target Tempo",
-        content: "Please enter a number greater than 0 for the target tempo.",
+        content: (
+          <Text>
+            Please enter a number greater than 0 for the target tempo.
+          </Text>
+        ),
         status: "critical",
         footer: "",
       });
@@ -134,7 +139,11 @@ function CreateGoalPage() {
       setModalInfo({
         heading: "Invalid field!",
         subtitle: "Field: Goal Duration",
-        content: "Please enter a number greater than 0 for the goal duration.",
+        content: (
+          <Text>
+            Please enter a number greater than 0 for the goal duration.
+          </Text>
+        ),
         status: "critical",
         footer: "",
       });
@@ -145,7 +154,7 @@ function CreateGoalPage() {
       setModalInfo({
         heading: "Missing field!",
         subtitle: "Field: Duration Format",
-        content: "Please enter a value for duration format.",
+        content: <Text>Please enter a value for duration format.</Text>,
         status: "critical",
         footer: "",
       });
@@ -193,31 +202,46 @@ function CreateGoalPage() {
 
   useEffect(() => {
     switch (goal.status) {
+      case "pending":
+        setLoading(true);
       case "created":
         setModalInfo({
           heading: "Goal Created!",
           subtitle: "Your goal was created successfully!",
-          content:
-            'Good luck on your new goal! \nYou can start logging sessions towards that goal by either finding this goal on your "Goals" page and adding a new session, or by creating a new session on the "Sessions" page and selecting the goal name.',
+          content: (
+            <Text>
+              Good luck on your new goal! You can start logging sessions towards
+              that goal by either finding this goal on your "Goals" page and
+              adding a new session, or by creating a new session on the
+              "Sessions" page and selecting the goal name.
+            </Text>
+          ),
           footer: "",
           status: "ok",
         });
+        setLoading(false);
         setShowModal(true);
-
         break;
       case "error":
         setModalInfo({
           heading: "Error!",
           subtitle: "An unknown error occurred.",
-          content:
-            "There was an error while trying to create your new goal. Please ensure all fields are filled out properly. Ensure that if you refresh the page you are still logged in, and that you have an internet connection. ",
+          content: (
+            <Text>
+              There was an error while trying to create your new goal. Please
+              ensure all fields are filled out properly. Ensure that if you
+              refresh the page you are still logged in, and that you have an
+              internet connection.
+            </Text>
+          ),
           footer: "",
           status: "critical",
         });
+        setLoading(false);
         setShowModal(true);
         break;
-
       default:
+        setLoading(false);
         break;
     }
   }, [goal]);
@@ -237,6 +261,7 @@ function CreateGoalPage() {
           onClose={(e) => handleModalClose(e)}
         />
       )}
+      {loading && <Spinner />}
       <Box pad={largePad[size]} direction="row" justify="center">
         <Form
           onChange={(nextValue) => setValue(nextValue)}

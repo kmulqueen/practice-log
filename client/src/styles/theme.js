@@ -12,4 +12,17 @@ export const theme = {
       "status-information": "#00E8CF",
     },
   },
+  dataTable: {
+    header: {
+      background: "#FFF",
+    },
+    pinned: {
+      body: {
+        background: "#FFF",
+      },
+      header: {
+        background: "#FFF",
+      },
+    },
+  },
 };
