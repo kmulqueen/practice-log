@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === "production") {
 
 db.sequelize.sync();
 
-// // ===== For DEV purposes =====
+// ===== For DEV purposes =====
 // db.sequelize.sync({ force: true }).then(() => {
 //   console.log("Drop and re-sync db.");
 // });

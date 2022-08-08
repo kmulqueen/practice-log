@@ -31,6 +31,11 @@ module.exports = (sequelize, Sequelize) => {
       required: true,
       allowNull: false,
     },
+    instrumentId: {
+      type: Sequelize.INTEGER,
+      required: true,
+      allowNull: false,
+    },
   });
   return Goal;
 };

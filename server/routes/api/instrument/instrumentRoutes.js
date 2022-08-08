@@ -1,16 +1,21 @@
 const router = require("express").Router();
 const instrumentController = require("../../../controllers/instrumentController");
+const { protect } = require("../../../middleware/authMiddleware");
+
+router
+  .route("/user/:userid")
+  .get(protect, instrumentController.findUserInstruments);
 
 router
   .route("/:id")
-  .get(instrumentController.findById)
-  .post(instrumentController.updateById)
-  .delete(instrumentController.deleteById);
+  .get(protect, instrumentController.findById)
+  .post(protect, instrumentController.updateById)
+  .delete(protect, instrumentController.deleteById);
 
 router
   .route("/")
   .get(instrumentController.findAll)
-  .post(instrumentController.create)
+  .post(protect, instrumentController.create)
   .delete(instrumentController.deleteAll);
 
 module.exports = router;

@@ -22,7 +22,7 @@ function LoginPage() {
 
   useEffect(() => {
     user.id !== null && nav("/");
-  }, [user]);
+  }, [user, nav]);
 
   function handleSubmit(value) {
     dispatch(loginUser(value));

@@ -1,48 +1,69 @@
-const e = require("cors");
 const db = require("../models");
 const Goal = db.goals;
 const Op = db.Sequelize.Op;
 
 // CREATE
 exports.create = async (req, res) => {
-  const { name, userId, targetTempo, targetDuration, tags } = req.body;
+  const { instrumentId, name, targetTempo, targetDuration, tags } = req.body;
+  if (!instrumentId) {
+    return res.status(400).json({
+      message: "instrumentId can not be empty.",
+    });
+  }
+
   if (!name) {
     return res.status(400).json({
       message: "Name can not be empty.",
     });
   }
 
-  if (!userId) {
-    return res.status(400).json({
-      message: "UserId can not be empty.",
-    });
-  }
+  // Check that instrumentId belongs to user
+  const userId = parseInt(req.user.dataValues.id);
+  const user = await db.users.findOne({ where: { id: userId } });
 
-  // Check that userID is valid
-  const userExists = await db.users.findOne({
-    where: { id: parseInt(userId) },
-    attributes: ["id"],
-  });
-
-  if (userExists === null) {
+  if (user === null) {
     return res.status(400).json({
       message: "Invalid userId",
     });
   }
-  const newGoal = {
-    name,
-    userId: parseInt(userId),
-    targetTempo,
-    targetDuration,
-    tags,
-  };
-  try {
-    const goal = await Goal.create(newGoal);
-    res.status(201).json(goal);
-  } catch (error) {
-    res.status(500).json({
-      message:
-        error.message || "Server error occurred while creating the goal.",
+
+  const userInstruments = await db.instruments.findAll({ where: { userId } });
+  let instrumentExists = false;
+
+  if (!userInstruments.length) {
+    return res.status(400).json({
+      message: "No instruments found for user.",
+    });
+  } else {
+    userInstruments.forEach((instrument) => {
+      if (instrument.id === instrumentId) {
+        instrumentExists = true;
+        return;
+      }
+    });
+  }
+
+  if (instrumentExists) {
+    try {
+      const newGoal = {
+        name,
+        instrumentId: parseInt(instrumentId),
+        userId,
+        targetTempo,
+        targetDuration,
+        tags,
+      };
+      const goal = await Goal.create(newGoal);
+      res.status(201).json(goal);
+    } catch (error) {
+      res.status(500).json({
+        message:
+          error.message || "Server error occurred while creating the goal.",
+      });
+    }
+  } else {
+    return res.status(403).json({
+      message: "User is not authorized.",
     });
   }
 };

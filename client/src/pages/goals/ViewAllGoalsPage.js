@@ -26,7 +26,7 @@ function ViewAllGoalsPage() {
 
   useEffect(() => {
     dispatch(getUserGoals(user.id));
-  }, [user]);
+  }, [user, dispatch]);
 
   useEffect(() => {
     setPlaceHolder(null);

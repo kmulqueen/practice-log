@@ -8,6 +8,11 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING,
     },
+    userId: {
+      type: Sequelize.INTEGER,
+      required: true,
+      allowNull: false,
+    },
   });
   return Instrument;
 };

@@ -12,7 +12,7 @@ router
 
 router
   .route("/")
-  .get(goalController.findAll)
+  .get(protect, goalController.findAll)
   .post(protect, goalController.create)
   .delete(protect, goalController.deleteAll);
 

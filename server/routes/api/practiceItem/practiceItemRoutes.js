@@ -1,16 +1,17 @@
 const router = require("express").Router();
 const practiceItemController = require("../../../controllers/practiceItemController");
+const { protect } = require("../../../middleware/authMiddleware");
 
 router
   .route("/:id")
-  .get(practiceItemController.findById)
-  .post(practiceItemController.updateById)
-  .delete(practiceItemController.deleteById);
+  .get(protect, practiceItemController.findById)
+  .post(protect, practiceItemController.updateById)
+  .delete(protect, practiceItemController.deleteById);
 
 router
   .route("/")
-  .get(practiceItemController.findAll)
-  .post(practiceItemController.create)
-  .delete(practiceItemController.deleteAll);
+  .get(protect, practiceItemController.findAll)
+  .post(protect, practiceItemController.create)
+  .delete(protect, practiceItemController.deleteAll);
 
 module.exports = router;

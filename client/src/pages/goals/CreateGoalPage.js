@@ -204,6 +204,7 @@ function CreateGoalPage() {
     switch (goal.status) {
       case "pending":
         setLoading(true);
+        break;
       case "created":
         setModalInfo({
           heading: "Goal Created!",

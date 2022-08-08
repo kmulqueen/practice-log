@@ -23,4 +23,7 @@ db.goals.hasMany(db.practiceItems);
 db.users.hasMany(db.goals);
 db.goals.belongsTo(db.users);
 db.users.hasMany(db.practiceItems);
+db.users.hasMany(db.instruments);
+db.instruments.belongsTo(db.users);
+db.goals.belongsTo(db.instruments);
 module.exports = db;

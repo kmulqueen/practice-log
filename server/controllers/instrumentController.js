@@ -12,6 +12,7 @@ exports.create = async (req, res) => {
   }
   const newInstrument = {
     name: req.body.name,
+    userId: req.user.dataValues.id,
   };
   try {
     const instrument = await Instrument.create(newInstrument);
@@ -50,11 +51,38 @@ exports.findById = async (req, res) => {
   const id = parseInt(req.params.id);
   const instrument = await Instrument.findOne({ where: { id: id } });
   if (instrument === null) {
-    res.status(404).json({
+    return res.status(404).json({
       message: "Instrument ID not found.",
     });
   } else {
-    res.status(200).json(instrument);
+    return res.status(200).json(instrument);
+  }
+};
+
+exports.findUserInstruments = async (req, res) => {
+  const userId = parseInt(req.user.dataValues.id);
+  try {
+    const user = await db.users.findOne({ where: { id: userId } });
+    if (user === null) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    } else {
+      const instruments = await Instrument.findAll({ where: { userId } });
+      if (!instruments.length) {
+        return res.status(404).json({
+          message: "No instruments found for user.",
+        });
+      } else {
+        return res.status(200).json(instruments);
+      }
+    }
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error.message ||
+        "Server error occurred while retrieving user instruments.",
+    });
   }
 };
 // Update a Instrument by the id in the request
