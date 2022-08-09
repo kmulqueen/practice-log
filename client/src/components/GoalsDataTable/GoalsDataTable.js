@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Box, DataTable, Heading, ResponsiveContext, Tag, Text } from "grommet";
 import { InProgress, Checkmark, More } from "grommet-icons";
@@ -9,6 +10,7 @@ import {
   showTableOverflow,
 } from "../../styles/utils";
 import Modal from "../Modal/Modal";
+import { getUserInstruments } from "../../features/instrument/instrumentActions";
 import moment from "moment";
 
 function GoalsDataTable({ data, placeHolder }) {
@@ -20,8 +22,10 @@ function GoalsDataTable({ data, placeHolder }) {
     footer: "",
     status: "",
   });
+  const { userInstruments } = useSelector((state) => state.instrument);
   const size = useContext(ResponsiveContext);
   const nav = useNavigate();
+  const dispatch = useDispatch();
 
   const columns = [
     {
@@ -41,6 +45,21 @@ function GoalsDataTable({ data, placeHolder }) {
         }
       },
       pin: ["xsmall", "small"].includes(size),
+    },
+    {
+      property: "instrumentId",
+      header: "Instrument",
+      render: (datum) => {
+        if (typeof datum === "object") {
+          return (
+            <Box>
+              <Text size={sizePad[size]}>
+                {formatInstrumentName(datum.instrumentId)}
+              </Text>
+            </Box>
+          );
+        }
+      },
     },
     {
       property: "createdAt",
@@ -83,6 +102,20 @@ function GoalsDataTable({ data, placeHolder }) {
   function formatDate(date) {
     return moment(date).format("MMM Do, YYYY");
   }
+  function formatInstrumentName(instrumentId) {
+    if (typeof userInstruments === "object") {
+      const instrumentName = userInstruments.filter(
+        (instrument) => instrument.id === instrumentId
+      )[0].name;
+      if (instrumentName) {
+        return instrumentName;
+      } else {
+        return "N/A";
+      }
+    } else {
+      return "";
+    }
+  }
   function formatStatusCell(status) {
     if (status === null) {
       return (
@@ -113,6 +146,7 @@ function GoalsDataTable({ data, placeHolder }) {
     return (
       <Box direction="column" gap={smallPad[size]}>
         <Text>Created on {formatDate(datum.createdAt)}</Text>
+        <Text>Instrument: {formatInstrumentName(datum.instrumentId)}</Text>
         <Text>Target tempo: {datum.targetTempo} BPM</Text>
         <Text>Target time investment: {datum.targetDuration}</Text>
         <Text>Total time invested: {datum.totalDuration || "None"}</Text>
@@ -163,6 +197,9 @@ function GoalsDataTable({ data, placeHolder }) {
     setShowInformationModal(false);
   }
 
+  useEffect(() => {
+    dispatch(getUserInstruments());
+  }, [dispatch]);
   return (
     <>
       {showInformationModal && (

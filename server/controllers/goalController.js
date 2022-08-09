@@ -133,6 +133,16 @@ exports.findUserGoals = async (req, res) => {
 // Update a Goal by the id in the request
 exports.updateById = async (req, res) => {};
 // Delete a Goal with the specified id in the request
-exports.deleteById = async (req, res) => {};
+exports.deleteById = async (req, res) => {
+  const goalId = parseInt(req.params.id);
+  try {
+    await Goal.destroy({ where: { id: goalId } });
+    return res.status(200).json({ message: "Goal deleted." });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Server error occurred while deleting goal.",
+    });
+  }
+};
 // Delete all Goals from the database.
 exports.deleteAll = async (req, res) => {};

@@ -17,6 +17,11 @@ function AppHeader() {
     nav("/login");
   }
 
+  function handleHeadingClick(e) {
+    e.stopPropagation();
+    nav("/");
+  }
+
   return (
     <Box
       tag="header"
@@ -28,7 +33,7 @@ function AppHeader() {
       elevation="xsmall"
       style={{ zIndex: "1" }}
     >
-      <Heading level="3" margin="none">
+      <Heading level="3" margin="none" onClick={(e) => handleHeadingClick(e)}>
         Practice Log
       </Heading>
       {user.id ? (

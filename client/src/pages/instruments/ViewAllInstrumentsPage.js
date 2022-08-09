@@ -1,62 +1,62 @@
 import React, { useEffect, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageWrapper from "../../components/PageWrapper/PageWrapper";
-import GoalsDataTable from "../../components/GoalsDataTable/GoalsDataTable";
+import InstrumentsDataTable from "../../components/InstrumentsDataTable/InstrumentsDataTable";
 import { Add } from "grommet-icons";
 import { Box, Button, Heading, ResponsiveContext } from "grommet";
 import { useNavigate } from "react-router-dom";
-import { getUserGoals } from "../../features/goal/goalActions";
+import { getUserInstruments } from "../../features/instrument/instrumentActions";
 import { smallIcon } from "../../styles/utils";
 
-function ViewAllGoalsPage() {
+function ViewAllInstrumentsPage() {
   const [placeHolder, setPlaceHolder] = useState(null);
   const nav = useNavigate();
   const size = useContext(ResponsiveContext);
 
   const dispatch = useDispatch();
-  const { userGoals, status: userGoalsStatus } = useSelector(
-    (state) => state.goal
+  const { userInstruments, status: userInstrumentsStatus } = useSelector(
+    (state) => state.instrument
   );
 
   function handleCreateClick(e) {
     e.stopPropagation();
-    nav("/goals/create");
+    nav("/instruments/create");
   }
 
   useEffect(() => {
-    dispatch(getUserGoals());
+    dispatch(getUserInstruments());
   }, [dispatch]);
 
   useEffect(() => {
     setPlaceHolder(null);
-    if (userGoalsStatus === "pending") {
+    if (userInstrumentsStatus === "pending") {
       setPlaceHolder("Loading...");
     } else if (
-      typeof userGoals !== "object" &&
-      userGoalsStatus === "retrieved"
+      typeof userInstruments !== "object" &&
+      userInstrumentsStatus === "retrieved"
     ) {
       setPlaceHolder(
-        "Error retrieving user's goals. Please refresh the page and try again."
+        "Error retrieving user's instruments. Please refresh the page and try again."
       );
     }
-  }, [userGoals, userGoalsStatus]);
+  }, [userInstruments, userInstrumentsStatus]);
   return (
     <PageWrapper>
       <Box direction="row" gap="medium">
         <Heading level={1} size="small">
-          My Goals
+          My Instruments
         </Heading>
         <Button
-          label="Create Goal"
+          label="Create Instrument"
           primary
           icon={<Add size={smallIcon[size]} />}
           onClick={(e) => handleCreateClick(e)}
           size={smallIcon[size]}
         />
       </Box>
-      <GoalsDataTable data={userGoals} placeHolder={placeHolder} />
+      <InstrumentsDataTable data={userInstruments} placeHolder={placeHolder} />
     </PageWrapper>
   );
 }
 
-export default ViewAllGoalsPage;
+export default ViewAllInstrumentsPage;

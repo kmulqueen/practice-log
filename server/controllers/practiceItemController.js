@@ -4,7 +4,8 @@ const Op = db.Sequelize.Op;
 
 // CREATE
 exports.create = async (req, res) => {
-  const { exercise, goalId, userId, tempo, duration, tags } = req.body;
+  const { exercise, goalId, tempo, duration, tags } = req.body;
+  const userId = parseInt(req.user.dataValues.id);
   if (!exercise) {
     return res.status(400).json({
       message: "Exercise can not be empty.",
@@ -17,12 +18,6 @@ exports.create = async (req, res) => {
     });
   }
 
-  if (!userId) {
-    return res.status(400).json({
-      message: "UserId can not be empty.",
-    });
-  }
-
   // Check if goalId is valid
   const goal = await db.goals.findOne({ where: { id: goalId } });
   if (goal === null) {
@@ -31,16 +26,6 @@ exports.create = async (req, res) => {
     });
   }
 
-  // Check if userId is valid
-  const user = await db.users.findOne({
-    where: { id: userId },
-    attributes: ["id"],
-  });
-  if (user === null) {
-    return res.status(400).json({
-      message: "Invalid userId.",
-    });
-  }
   const newPracticeItem = {
     exercise,
     goalId,

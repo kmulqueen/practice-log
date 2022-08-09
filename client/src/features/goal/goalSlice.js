@@ -43,7 +43,7 @@ export const goalSlice = createSlice({
       state.status = "retrieved";
       state.userGoals = payload;
     },
-    [getUserGoals]: (state) => {
+    [getUserGoals.rejected]: (state) => {
       state.status = "error";
     },
   },

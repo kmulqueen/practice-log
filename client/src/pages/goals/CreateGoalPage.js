@@ -21,6 +21,7 @@ import {
   createGoal,
   resetGoalSubmissionStatus,
 } from "../../features/goal/goalActions";
+import { getUserInstruments } from "../../features/instrument/instrumentActions";
 
 // Escaping regular expression special characters: [ \ ^ $ . | ? * + ( )
 const getEscapedText = (text) => text.replace(/[-\\^$*+?.()|[\]{}]/g, "\\$&");
@@ -38,6 +39,7 @@ function CreateGoalPage() {
   const [value, setValue] = useState({
     name: "",
     tempo: 60,
+    instrument: "",
     durationTime: 0,
     durationFormat: "",
     tags: "",
@@ -53,8 +55,8 @@ function CreateGoalPage() {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
   const goal = useSelector((state) => state.goal);
+  const instrument = useSelector((state) => state.instrument);
   const nav = useNavigate();
 
   function onSearch(text) {
@@ -106,8 +108,30 @@ function CreateGoalPage() {
   }
 
   function handleSubmit(value) {
-    const { name, tempo, durationTime, durationFormat, tags } = value;
+    const {
+      name,
+      instrument: instrumentValue,
+      tempo,
+      durationTime,
+      durationFormat,
+      tags,
+    } = value;
     // Validate values
+    if (!instrumentValue.length) {
+      setShowModal(true);
+      setModalInfo({
+        heading: "Missing field!",
+        subtitle: "Field: Instrument",
+        content: (
+          <Text>
+            Please select an instrument that this goal is associated with.
+          </Text>
+        ),
+        status: "critical",
+        footer: "",
+      });
+      return;
+    }
     if (!name.length) {
       setShowModal(true);
       setModalInfo({
@@ -168,15 +192,38 @@ function CreateGoalPage() {
     // Format durations
     const targetDuration = `${durationTime} ${durationFormat}`;
 
-    const payload = {
-      userId: user.id,
-      name,
-      targetTempo: tempo,
-      targetDuration,
-      tags: filteredTags,
-    };
+    // Get Instrument ID
+    let instrumentId = null;
+    const userInstrument = instrument.userInstruments.filter(
+      (inst) => inst.name === instrumentValue
+    )[0];
+    if (userInstrument) {
+      instrumentId = userInstrument.id;
+      const payload = {
+        instrumentId,
+        name,
+        targetTempo: tempo,
+        targetDuration,
+        tags: filteredTags,
+      };
 
-    dispatch(createGoal(payload));
+      dispatch(createGoal(payload));
+    } else {
+      setShowModal(true);
+      setModalInfo({
+        heading: "Invalid Instrument",
+        subtitle: "Field: Instrument",
+        content: (
+          <Text>
+            The instrument you selected does not have an id. Please make sure it
+            exists in your instrument list.
+          </Text>
+        ),
+        status: "critical",
+        footer: "",
+      });
+      return;
+    }
   }
 
   function handleCancelClick(e) {
@@ -197,7 +244,9 @@ function CreateGoalPage() {
     if (goal.status === "created") {
       nav("/goals/view");
     }
-    dispatch(resetGoalSubmissionStatus());
+    if (goal.status !== "") {
+      dispatch(resetGoalSubmissionStatus());
+    }
   }
 
   useEffect(() => {
@@ -247,6 +296,10 @@ function CreateGoalPage() {
     }
   }, [goal]);
 
+  useEffect(() => {
+    dispatch(getUserInstruments());
+  }, [dispatch]);
+
   return (
     <PageWrapper>
       <Heading level={1} size="small">
@@ -270,6 +323,14 @@ function CreateGoalPage() {
           onSubmit={({ value }) => handleSubmit(value)}
           style={formStyle}
         >
+          <FormField name="instrument" htmlFor="instrument" label="Instrument">
+            <Select
+              name="instrument"
+              options={
+                instrument.userInstruments.map((inst) => inst.name) || []
+              }
+            />
+          </FormField>
           <FormField name="name" htmlFor="name" label="Goal Name">
             <TextInput name="name" />
           </FormField>

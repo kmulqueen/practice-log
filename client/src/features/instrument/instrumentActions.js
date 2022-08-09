@@ -1,12 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const createGoal = createAsyncThunk(
-  "goal/create",
-  async (
-    { instrumentId, name, targetTempo, targetDuration, tags },
-    { getState }
-  ) => {
+export const createInstrument = createAsyncThunk(
+  "instrument/create",
+  async ({ name }, { getState }) => {
     try {
       const { user } = getState();
       const config = {
@@ -17,8 +14,8 @@ export const createGoal = createAsyncThunk(
       };
 
       const res = await axios.post(
-        "/api/goals",
-        { instrumentId, name, targetTempo, targetDuration, tags },
+        "/api/instruments",
+        { userId: user.id, name },
         config
       );
       return res.data;
@@ -32,15 +29,15 @@ export const createGoal = createAsyncThunk(
   }
 );
 
-export const resetGoalSubmissionStatus = createAsyncThunk(
-  "goal/resetSubmissionStatus",
+export const resetInstrumentSubmissionStatus = createAsyncThunk(
+  "instrument/resetSubmissionStatus",
   async () => {
     return "";
   }
 );
 
-export const getUserGoals = createAsyncThunk(
-  "goal/findUserGoals",
+export const getUserInstruments = createAsyncThunk(
+  "instrument/findUserGoals",
   async (_, { getState }) => {
     try {
       const { user } = getState();
@@ -49,7 +46,7 @@ export const getUserGoals = createAsyncThunk(
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const res = await axios.get(`/api/goals/user/${user.id}`, config);
+      const res = await axios.get(`/api/instruments/user/${user.id}`, config);
       return res.data;
     } catch (error) {
       if (error.response && error.response.data.message) {
