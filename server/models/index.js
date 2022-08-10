@@ -17,6 +17,7 @@ db.instruments = require("./instrumentModel.js")(sequelize, Sequelize);
 db.goals = require("./goalModel.js")(sequelize, Sequelize);
 db.practiceItems = require("./practiceItemModel.js")(sequelize, Sequelize);
 db.users = require("./userModel.js")(sequelize, Sequelize);
+db.tags = require("./tagModel")(sequelize, Sequelize);
 
 // Associations
 db.goals.hasMany(db.practiceItems);
@@ -26,4 +27,6 @@ db.users.hasMany(db.practiceItems);
 db.users.hasMany(db.instruments);
 db.instruments.belongsTo(db.users);
 db.goals.belongsTo(db.instruments);
+db.users.hasMany(db.tags);
+db.tags.belongsTo(db.users);
 module.exports = db;

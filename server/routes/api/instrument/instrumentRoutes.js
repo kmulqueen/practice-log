@@ -2,9 +2,7 @@ const router = require("express").Router();
 const instrumentController = require("../../../controllers/instrumentController");
 const { protect } = require("../../../middleware/authMiddleware");
 
-router
-  .route("/user/:userid")
-  .get(protect, instrumentController.findUserInstruments);
+router.route("/user").get(protect, instrumentController.findUserInstruments);
 
 router
   .route("/:id")

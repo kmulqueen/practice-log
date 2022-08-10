@@ -12,7 +12,7 @@ exports.create = async (req, res) => {
   }
   const newInstrument = {
     name: req.body.name,
-    userId: req.user.dataValues.id,
+    userId: parseInt(req.user.dataValues.id),
   };
   try {
     const instrument = await Instrument.create(newInstrument);

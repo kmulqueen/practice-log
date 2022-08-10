@@ -103,7 +103,7 @@ exports.findById = async (req, res) => {
 
 // FIND ALL GOALS BY USER ID
 exports.findUserGoals = async (req, res) => {
-  const userId = parseInt(req.params.userId);
+  const userId = parseInt(req.user.dataValues.id);
   const user = await db.users.findOne({ where: { id: userId } });
   if (user === null) {
     return res.status(404).json({
