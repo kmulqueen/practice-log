@@ -2,9 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { handleActionError } from "../../utils/handleActionError";
 
-export const createInstrument = createAsyncThunk(
-  "instrument/create",
-  async ({ name }, { getState }) => {
+export const createTag = createAsyncThunk(
+  "tag/create",
+  async (name, { getState }) => {
     try {
       const { user } = getState();
       const config = {
@@ -14,11 +14,7 @@ export const createInstrument = createAsyncThunk(
         },
       };
 
-      const res = await axios.post(
-        "/api/instruments",
-        { userId: user.id, name },
-        config
-      );
+      const res = await axios.post("/api/tags", { name }, config);
       return res.data;
     } catch (error) {
       const message = handleActionError(error);
@@ -27,15 +23,8 @@ export const createInstrument = createAsyncThunk(
   }
 );
 
-export const resetInstrumentSubmissionStatus = createAsyncThunk(
-  "instrument/resetSubmissionStatus",
-  async () => {
-    return "";
-  }
-);
-
-export const getUserInstruments = createAsyncThunk(
-  "instrument/findUserGoals",
+export const getUserTags = createAsyncThunk(
+  "tag/getUserTags",
   async (_, { getState }) => {
     try {
       const { user } = getState();
@@ -44,11 +33,18 @@ export const getUserInstruments = createAsyncThunk(
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const res = await axios.get(`/api/instruments/user`, config);
+      const res = await axios.get(`/api/tags/user`, config);
       return res.data;
     } catch (error) {
       const message = handleActionError(error);
       return message;
     }
+  }
+);
+
+export const resetTagSubmissionStatus = createAsyncThunk(
+  "tag/resetSubmissionStatus",
+  async () => {
+    return "";
   }
 );

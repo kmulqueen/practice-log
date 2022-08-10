@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { handleActionError } from "../../utils/handleActionError";
 
 export const loginUser = createAsyncThunk(
   "user/login",
@@ -19,11 +20,8 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem("practicelog_userInfo", JSON.stringify(res.data));
       return res.data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        return error.response.data.message;
-      } else {
-        return error.message;
-      }
+      const message = handleActionError(error);
+      return message;
     }
   }
 );

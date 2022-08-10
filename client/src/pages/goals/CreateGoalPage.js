@@ -22,6 +22,11 @@ import {
   resetGoalSubmissionStatus,
 } from "../../features/goal/goalActions";
 import { getUserInstruments } from "../../features/instrument/instrumentActions";
+import {
+  getUserTags,
+  createTag,
+  resetTagSubmissionStatus,
+} from "../../features/tag/tagActions";
 
 // Escaping regular expression special characters: [ \ ^ $ . | ? * + ( )
 const getEscapedText = (text) => text.replace(/[-\\^$*+?.()|[\]{}]/g, "\\$&");
@@ -29,12 +34,14 @@ const getEscapedText = (text) => text.replace(/[-\\^$*+?.()|[\]{}]/g, "\\$&");
 // Create the regular expression with escaped special characters.
 const formatSearchExpression = (text) => new RegExp(getEscapedText(text), "i");
 
-// TODO: Replace with user's tags
-const defaultOptions = ["Tag 1", "Tag 2", "Tag 3"];
-
 function CreateGoalPage() {
+  const goal = useSelector((state) => state.goal);
+  const instrument = useSelector((state) => state.instrument);
+  const tag = useSelector((state) => state.tag);
   const size = useContext(ResponsiveContext);
-  const [filteredTagOptions, setFilteredTagOptions] = useState(defaultOptions);
+
+  const userTags = tag.userTags.map((tag) => tag.name) || [];
+  const [filteredTagOptions, setFilteredTagOptions] = useState(userTags);
   const [tagSearch, setTagSearch] = useState("");
   const [value, setValue] = useState({
     name: "",
@@ -55,14 +62,12 @@ function CreateGoalPage() {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
-  const goal = useSelector((state) => state.goal);
-  const instrument = useSelector((state) => state.instrument);
   const nav = useNavigate();
 
   function onSearch(text) {
     setTagSearch(text);
     const exp = formatSearchExpression(text);
-    const filteredOptions = defaultOptions.filter((option) => exp.test(option));
+    const filteredOptions = userTags.filter((option) => exp.test(option));
     if (!filteredOptions.length) {
       setFilteredTagOptions([
         <Box
@@ -83,26 +88,15 @@ function CreateGoalPage() {
 
   function handleCreateTagClick(e, tag) {
     e.stopPropagation();
-    defaultOptions.push(tag);
-    setValue((prevState) => ({
-      ...prevState,
-      tags: [...prevState.tags, tag],
-    }));
-    setFilteredTagOptions(defaultOptions);
-    setTagSearch("");
+    dispatch(createTag(tag));
   }
 
   // Fix for undefined values being passed into tags as a result of the create tag button not being able to fill up it's full width.
   function handleSelect(value) {
     value.forEach((val) => {
       if (val === undefined) {
-        defaultOptions.push(tagSearch);
-        setValue((prevState) => ({
-          ...prevState,
-          tags: [...prevState.tags, tagSearch],
-        }));
-        setFilteredTagOptions(defaultOptions);
-        setTagSearch("");
+        dispatch(createTag(tagSearch));
+        return;
       }
     });
   }
@@ -185,10 +179,6 @@ function CreateGoalPage() {
       return;
     }
 
-    let filteredTags = [];
-    if (tags.length) {
-      filteredTags = tags.filter((tag) => tag !== undefined);
-    }
     // Format durations
     const targetDuration = `${durationTime} ${durationFormat}`;
 
@@ -204,7 +194,7 @@ function CreateGoalPage() {
         name,
         targetTempo: tempo,
         targetDuration,
-        tags: filteredTags,
+        tags,
       };
 
       dispatch(createGoal(payload));
@@ -246,6 +236,9 @@ function CreateGoalPage() {
     }
     if (goal.status !== "") {
       dispatch(resetGoalSubmissionStatus());
+    }
+    if (tag.status !== "") {
+      dispatch(resetTagSubmissionStatus());
     }
   }
 
@@ -297,7 +290,37 @@ function CreateGoalPage() {
   }, [goal]);
 
   useEffect(() => {
+    if (tagSearch === "" && tag.status === "retrieved") {
+      const tagNames = tag.userTags.map((tag) => tag.name);
+      setFilteredTagOptions(tagNames);
+    } else if (tagSearch !== "" && tag.status === "created") {
+      setValue((prevState) => ({
+        ...prevState,
+        tags: [...prevState.tags, tagSearch],
+      }));
+      setFilteredTagOptions(userTags);
+      setTagSearch("");
+      dispatch(resetTagSubmissionStatus());
+    } else if (tagSearch !== "" && tag.status === "error") {
+      setShowModal(true);
+      setModalInfo({
+        heading: "Error creating tag!",
+        subtitle: "Field: Add Tags",
+        content: (
+          <Text>
+            An error occurred while trying to create this tag. You may have
+            already created this tag before.
+          </Text>
+        ),
+        status: "critical",
+        footer: "",
+      });
+    }
+  }, [tag, tagSearch, dispatch]);
+
+  useEffect(() => {
     dispatch(getUserInstruments());
+    dispatch(getUserTags());
   }, [dispatch]);
 
   return (

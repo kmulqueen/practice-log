@@ -37,7 +37,7 @@ export const instrumentSlice = createSlice({
       state.status = "retrieved";
       state.userInstruments = payload;
     },
-    [getUserInstruments]: (state) => {
+    [getUserInstruments.rejected]: (state) => {
       state.status = "error";
     },
   },

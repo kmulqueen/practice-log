@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { handleActionError } from "../../utils/handleActionError";
 
 export const createGoal = createAsyncThunk(
   "goal/create",
@@ -23,11 +24,8 @@ export const createGoal = createAsyncThunk(
       );
       return res.data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        return error.response.data.message;
-      } else {
-        return error.message;
-      }
+      const message = handleActionError(error);
+      return message;
     }
   }
 );
@@ -49,14 +47,11 @@ export const getUserGoals = createAsyncThunk(
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const res = await axios.get(`/api/goals/user/${user.id}`, config);
+      const res = await axios.get(`/api/goals/user`, config);
       return res.data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        return error.response.data.message;
-      } else {
-        return error.message;
-      }
+      const message = handleActionError(error);
+      return message;
     }
   }
 );
