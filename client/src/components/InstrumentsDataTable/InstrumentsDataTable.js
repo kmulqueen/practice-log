@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { Box, DataTable, Heading, ResponsiveContext, Text } from "grommet";
 import { More } from "grommet-icons";
 import {
@@ -8,6 +9,7 @@ import {
   sizePad,
   showTableOverflow,
 } from "../../styles/utils";
+import { setInstrument } from "../../features/instrument/instrumentActions";
 import Modal from "../Modal/Modal";
 import moment from "moment";
 
@@ -22,6 +24,7 @@ function InstrumentsDataTable({ data, placeHolder }) {
   });
   const size = useContext(ResponsiveContext);
   const nav = useNavigate();
+  const dispatch = useDispatch();
 
   const columns = [
     {
@@ -83,8 +86,8 @@ function InstrumentsDataTable({ data, placeHolder }) {
   }
   function handleNameClick(e, datum) {
     e.stopPropagation();
-    // TODO: Navigate to the instrument page
-    console.log("clicked", datum);
+    dispatch(setInstrument(datum));
+    nav(`/instruments/view`);
   }
   function handleInformationClick(e, datum) {
     e.stopPropagation();

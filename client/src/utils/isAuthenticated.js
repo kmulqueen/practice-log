@@ -1,3 +1,3 @@
 export const isAuthenticated = ({ id }) => {
-  return id !== null;
+  return id !== null && id !== undefined;
 };

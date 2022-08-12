@@ -6,7 +6,7 @@ export const cardItems = [
     subtitle: "View/Manage your instruments",
     icon: <Music size="large" color="text-strong" />,
     id: 1,
-    linkTo: "/instruments/view",
+    linkTo: "/instruments",
   },
   {
     title: "Goals",

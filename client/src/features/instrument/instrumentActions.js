@@ -52,3 +52,51 @@ export const getUserInstruments = createAsyncThunk(
     }
   }
 );
+
+export const setInstrument = createAsyncThunk(
+  "instrument/set",
+  async (instrument, { rejectWithValue }) => {
+    try {
+      // If Instrument object is passed
+      const instrumentKeys = Object.keys(instrument);
+      const acceptedKeys = ["createdAt", "id", "name", "updatedAt", "userId"];
+      // Verify instrument
+      if (instrumentKeys.length !== 5) {
+        rejectWithValue();
+      } else {
+        const verify = instrumentKeys.every((key) => {
+          return acceptedKeys.indexOf(key) !== -1;
+        });
+        if (verify) {
+          return instrument;
+        } else {
+          rejectWithValue();
+        }
+      }
+    } catch (error) {
+      const message = handleActionError(error);
+      return message;
+    }
+  }
+);
+
+export const updateInstrument = createAsyncThunk(
+  "instrument/update",
+  async ({ name, id }, { getState }) => {
+    try {
+      const { user } = getState();
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      await axios.post(`/api/instruments/${id}`, { name }, config);
+      return;
+    } catch (error) {
+      const message = handleActionError(error);
+      return message;
+    }
+  }
+);

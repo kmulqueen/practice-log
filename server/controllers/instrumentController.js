@@ -86,7 +86,26 @@ exports.findUserInstruments = async (req, res) => {
   }
 };
 // Update a Instrument by the id in the request
-exports.updateById = async (req, res) => {};
+exports.updateById = async (req, res) => {
+  try {
+    const instrumentId = parseInt(req.params.id);
+    const userId = parseInt(req.user.dataValues.id);
+
+    const updatedInstrument = await Instrument.update(
+      { name: req.body.name },
+      { where: { id: instrumentId, userId } }
+    );
+    if (updatedInstrument[0] === 0) {
+      return res.status(404).json({ message: "Instrument not found." });
+    }
+    return res.status(200).json(updatedInstrument[0]);
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error.message || "Server error occurred while updating instrument.",
+    });
+  }
+};
 // Delete a Instrument with the specified id in the request
 exports.deleteById = async (req, res) => {};
 // Delete all Instruments from the database.

@@ -11,6 +11,7 @@ import CreateSessionPage from "./pages/session/CreateSessionPage";
 import ViewSessionPage from "./pages/session/ViewSessionPage";
 import CreateInstrumentPage from "./pages/instruments/CreateInstrumentPage";
 import ViewAllInstrumentsPage from "./pages/instruments/ViewAllInstrumentsPage";
+import ViewInstrumentPage from "./pages/instruments/ViewInstrumentPage";
 
 function App() {
   return (
@@ -32,10 +33,10 @@ function App() {
           <Route path="/goals/create" element={<CreateGoalPage />} />
         </Route>
         <Route path="/instruments/view" exact element={<PrivateRoute />}>
-          <Route
-            path="/instruments/view"
-            element={<ViewAllInstrumentsPage />}
-          />
+          <Route path="/instruments/view" element={<ViewInstrumentPage />} />
+        </Route>
+        <Route path="/instruments" exact element={<PrivateRoute />}>
+          <Route path="/instruments" element={<ViewAllInstrumentsPage />} />
         </Route>
         <Route path="/instruments/create" exact element={<PrivateRoute />}>
           <Route

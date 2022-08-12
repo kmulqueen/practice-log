@@ -3,13 +3,17 @@ import {
   getUserInstruments,
   createInstrument,
   resetInstrumentSubmissionStatus,
+  setInstrument,
+  updateInstrument,
 } from "./instrumentActions";
 
 export const instrumentSlice = createSlice({
   name: "instrument",
   initialState: {
-    id: null,
-    name: "",
+    currentInstrument: {
+      id: null,
+      name: "",
+    },
     status: "",
     userInstruments: [],
   },
@@ -38,6 +42,28 @@ export const instrumentSlice = createSlice({
       state.userInstruments = payload;
     },
     [getUserInstruments.rejected]: (state) => {
+      state.status = "error";
+    },
+    // SET INSTRUMENT
+    [setInstrument.pending]: (state) => {
+      state.status = "pending";
+    },
+    [setInstrument.fulfilled]: (state, { payload }) => {
+      state.status = "retrieved";
+      state.currentInstrument.id = payload.id;
+      state.currentInstrument.name = payload.name;
+    },
+    [setInstrument.rejected]: (state) => {
+      state.status = "error";
+    },
+    // UPDATE INSTRUMENT
+    [updateInstrument.pending]: (state) => {
+      state.status = "pending";
+    },
+    [updateInstrument.fulfilled]: (state) => {
+      state.status = "updated";
+    },
+    [updateInstrument.rejected]: (state) => {
       state.status = "error";
     },
   },
