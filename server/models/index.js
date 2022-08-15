@@ -29,4 +29,5 @@ db.instruments.belongsTo(db.users);
 db.goals.belongsTo(db.instruments);
 db.users.hasMany(db.tags);
 db.tags.belongsTo(db.users);
+db.practiceItems.hasMany(db.instruments);
 module.exports = db;

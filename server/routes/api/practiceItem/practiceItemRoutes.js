@@ -3,6 +3,9 @@ const practiceItemController = require("../../../controllers/practiceItemControl
 const { protect } = require("../../../middleware/authMiddleware");
 
 router
+  .route("/user/:id")
+  .get(protect, practiceItemController.findUserPracticeItems);
+router
   .route("/:id")
   .get(protect, practiceItemController.findById)
   .post(protect, practiceItemController.updateById)

@@ -9,6 +9,7 @@ import ViewAllGoalsPage from "./pages/goals/ViewAllGoalsPage";
 import ViewGoalPage from "./pages/goals/ViewGoalPage";
 import CreateSessionPage from "./pages/session/CreateSessionPage";
 import ViewSessionPage from "./pages/session/ViewSessionPage";
+import ViewAllSessionsPage from "./pages/session/ViewAllSessionsPage";
 import CreateInstrumentPage from "./pages/instruments/CreateInstrumentPage";
 import ViewAllInstrumentsPage from "./pages/instruments/ViewAllInstrumentsPage";
 import ViewInstrumentPage from "./pages/instruments/ViewInstrumentPage";
@@ -17,11 +18,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/session/:id" exact element={<PrivateRoute />}>
-          <Route path="/session/:id" element={<ViewSessionPage />} />
+        <Route path="/session/view" exact element={<PrivateRoute />}>
+          <Route path="/session/view" element={<ViewSessionPage />} />
         </Route>
-        <Route path="/createsession" exact element={<PrivateRoute />}>
-          <Route path="/createsession" element={<CreateSessionPage />} />
+        <Route path="/session/create" exact element={<PrivateRoute />}>
+          <Route path="/session/create" element={<CreateSessionPage />} />
+        </Route>
+        <Route path="/sessions" exact element={<PrivateRoute />}>
+          <Route path="/sessions" element={<ViewAllSessionsPage />} />
         </Route>
         <Route path="/goals/view/:id" exact element={<PrivateRoute />}>
           <Route path="/goals/view/:id" element={<ViewGoalPage />} />

@@ -4,7 +4,7 @@ const Op = db.Sequelize.Op;
 
 // CREATE
 exports.create = async (req, res) => {
-  const { exercise, goalId, tempo, duration, tags } = req.body;
+  const { exercise, goalId, instrumentId, tempo, duration, tags } = req.body;
   const userId = parseInt(req.user.dataValues.id);
   if (!exercise) {
     return res.status(400).json({
@@ -18,11 +18,27 @@ exports.create = async (req, res) => {
     });
   }
 
+  if (!instrumentId) {
+    return res.status(400).json({
+      message: "InstrumentId can not be empty.",
+    });
+  }
+
   // Check if goalId is valid
-  const goal = await db.goals.findOne({ where: { id: goalId } });
+  const goal = await db.goals.findOne({ where: { id: goalId, userId } });
   if (goal === null) {
     return res.status(400).json({
       message: "Invalid goalId.",
+    });
+  }
+
+  // Check if instrumentId is valid
+  const instrument = await db.instruments.findOne({
+    where: { id: instrumentId, userId },
+  });
+  if (instrument === null) {
+    return res.status(400).json({
+      message: "Invalid instrumentId.",
     });
   }
 
@@ -30,6 +46,7 @@ exports.create = async (req, res) => {
     exercise,
     goalId,
     userId,
+    instrumentId,
     tempo,
     duration,
     tags,
@@ -86,6 +103,54 @@ exports.findAll = async (req, res) => {
       message:
         error.message ||
         "Server error occured while retrieving practice items.",
+    });
+  }
+};
+
+// FIND USER'S PRACTICE ITEMS
+exports.findUserPracticeItems = async (req, res) => {
+  const acceptedQueryParams = ["exercise", "tags", "tempo", "duration", "date"];
+  const sentQueryParams = Object.keys(req.query);
+  let condition = {};
+
+  sentQueryParams.forEach((param) => {
+    // Remove any invalid query params
+    if (!acceptedQueryParams.includes(param)) {
+      delete req.query[param];
+    } else {
+      // Format condition based on dataType of param
+      if (param === "tags") {
+        condition[param] = { [Op.contains]: [req.query[param]] };
+      } else if (param === "tempo") {
+        condition[param] = { [Op.eq]: parseInt(req.query[param]) };
+      } else if (param === "date") {
+        condition["createdAt"] = {
+          [Op.gte]: new Date(req.query[param]),
+        };
+      } else {
+        condition[param] = { [Op.iLike]: `%${req.query[param]}%` };
+      }
+    }
+  });
+
+  try {
+    const userId = parseInt(req.user.dataValues.id);
+    const practiceItems = await PracticeItem.findAll({
+      where: condition,
+      userId,
+    });
+    if (practiceItems.length) {
+      res.status(200).json(practiceItems);
+    } else {
+      res.status(404).json({
+        message: "No practice items found for user.",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error.message ||
+        "Server error occured while retrieving user's practice items.",
     });
   }
 };
