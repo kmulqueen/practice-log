@@ -60,8 +60,10 @@ export const instrumentSlice = createSlice({
     [updateInstrument.pending]: (state) => {
       state.status = "pending";
     },
-    [updateInstrument.fulfilled]: (state) => {
+    [updateInstrument.fulfilled]: (state, { payload }) => {
       state.status = "updated";
+      state.currentInstrument.id = payload.id;
+      state.currentInstrument.name = payload.name;
     },
     [updateInstrument.rejected]: (state) => {
       state.status = "error";

@@ -83,20 +83,19 @@ export const setInstrument = createAsyncThunk(
 export const updateInstrument = createAsyncThunk(
   "instrument/update",
   async ({ name, id }, { getState }) => {
-    try {
-      const { user } = getState();
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
+    const { user } = getState();
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    };
 
-      await axios.post(`/api/instruments/${id}`, { name }, config);
-      return;
-    } catch (error) {
-      const message = handleActionError(error);
-      return message;
+    const res = await axios.post(`/api/instruments/${id}`, { name }, config);
+    if (res.status === 200) {
+      return { name, id };
+    } else {
+      return res.data;
     }
   }
 );
