@@ -2,7 +2,14 @@ import React, { useContext, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Box, DataTable, Heading, ResponsiveContext, Tag, Text } from "grommet";
-import { InProgress, Checkmark, More } from "grommet-icons";
+import {
+  Clock,
+  Dashboard,
+  FormSchedule,
+  More,
+  Notes,
+  Tag as TagIcon,
+} from "grommet-icons";
 import {
   smallPad,
   smallIcon,
@@ -11,6 +18,7 @@ import {
 } from "../../styles/utils";
 import Modal from "../Modal/Modal";
 import { getUserInstruments } from "../../features/instrument/instrumentActions";
+import { setSession } from "../../features/session/sessionActions";
 import moment from "moment";
 
 function SessionsDataTable({ data, placeHolder }) {
@@ -113,13 +121,18 @@ function SessionsDataTable({ data, placeHolder }) {
   }
   function formatInstrumentName(instrumentId) {
     if (typeof userInstruments === "object") {
-      const instrumentName = userInstruments.filter(
-        (instrument) => instrument.id === instrumentId
-      )[0].name;
-      if (instrumentName) {
-        return instrumentName;
+      if (instrumentId !== null && instrumentId !== undefined) {
+        let instrumentName = userInstruments.filter(
+          (instrument) => instrument.id === instrumentId
+        )[0];
+        if (instrumentName !== undefined) {
+          instrumentName = instrumentName.name;
+          return instrumentName;
+        } else {
+          return "N/A";
+        }
       } else {
-        return "N/A";
+        return "";
       }
     } else {
       return "";
@@ -129,12 +142,48 @@ function SessionsDataTable({ data, placeHolder }) {
   function formatModalContent(datum) {
     return (
       <Box direction="column" gap={smallPad[size]}>
-        <Text>Created on {formatDate(datum.createdAt)}</Text>
-        <Text>Instrument: {formatInstrumentName(datum.instrumentId)}</Text>
-        <Text>Tempo: {datum.tempo} BPM</Text>
-        <Text>Time practiced: {datum.duration}</Text>
-        <Box direction="column" gap={smallPad[size]}>
-          <Text>Tags:</Text>
+        <Box
+          direction="row"
+          gap={smallPad[size]}
+          justify="between"
+          align="center"
+          background="background-back"
+          pad={smallPad[size]}
+          round
+        >
+          <Box direction="column" justify="center" align="center">
+            <Dashboard size={smallIcon[size]} />
+            <Text weight="bold">Tempo</Text>
+            <Text>{datum.tempo} BPM</Text>
+          </Box>
+          <Box direction="column" justify="center" align="center">
+            <Clock size={smallIcon[size]} />
+            <Text weight="bold">Time Practiced</Text>
+            <Text>{datum.duration}</Text>
+          </Box>
+        </Box>
+        <Box
+          direction="column"
+          background="background-back"
+          pad={smallPad[size]}
+          round
+        >
+          <Box direction="row" gap="small" margin={{ bottom: smallPad[size] }}>
+            <Notes size={smallIcon[size]} />
+            <Text weight="bold">Description</Text>
+          </Box>
+          <Text>{datum.description}</Text>
+        </Box>
+        <Box
+          direction="column"
+          background="background-back"
+          pad={smallPad[size]}
+          round
+        >
+          <Box direction="row" gap="small" margin={{ bottom: smallPad[size] }}>
+            <TagIcon size={smallIcon[size]} />
+            <Text weight="bold">Tags</Text>
+          </Box>
           <Box direction="row" gap={smallPad[size]}>
             {datum.tags.map((tag) => (
               <Tag
@@ -150,6 +199,15 @@ function SessionsDataTable({ data, placeHolder }) {
     );
   }
 
+  function formatModalSubtitle(datum) {
+    return (
+      <Box direction="row" gap="small">
+        <FormSchedule />
+        <Text>{formatDate(datum.createdAt)}</Text>
+      </Box>
+    );
+  }
+
   function formatPlaceHolder() {
     if (placeHolder !== null) {
       return (
@@ -161,14 +219,14 @@ function SessionsDataTable({ data, placeHolder }) {
   }
   function handleNameClick(e, datum) {
     e.stopPropagation();
-    // TODO: Navigate to the session page
-    console.log("clicked", datum);
+    dispatch(setSession(datum.id));
+    nav("/session/view");
   }
   function handleInformationClick(e, datum) {
     e.stopPropagation();
     setModalInfo({
       heading: `${datum.exercise}`,
-      subtitle: `${formatDate(datum.createdAt)}`,
+      subtitle: formatModalSubtitle(datum),
       content: formatModalContent(datum),
       footer: "",
       status: "information",

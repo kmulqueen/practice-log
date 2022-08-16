@@ -4,7 +4,8 @@ const Op = db.Sequelize.Op;
 
 // CREATE
 exports.create = async (req, res) => {
-  const { exercise, goalId, instrumentId, tempo, duration, tags } = req.body;
+  const { exercise, goalId, instrumentId, tempo, duration, tags, description } =
+    req.body;
   const userId = parseInt(req.user.dataValues.id);
   if (!exercise) {
     return res.status(400).json({
@@ -50,6 +51,7 @@ exports.create = async (req, res) => {
     tempo,
     duration,
     tags,
+    description,
   };
 
   try {
@@ -158,8 +160,9 @@ exports.findUserPracticeItems = async (req, res) => {
 // FIND BY ID
 exports.findById = async (req, res) => {
   const id = parseInt(req.params.id);
+  const userId = parseInt(req.user.dataValues.id);
   const practiceItem = await PracticeItem.findOne({
-    where: { id: id },
+    where: { id, userId },
   });
   if (practiceItem === null) {
     res.status(404).json({

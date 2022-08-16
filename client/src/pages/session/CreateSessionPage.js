@@ -9,6 +9,7 @@ import {
   Form,
   FormField,
   Heading,
+  TextArea,
   TextInput,
   ResponsiveContext,
   Select,
@@ -45,6 +46,9 @@ function CreateSessionPage() {
   const userTags = tag.userTags.map((tag) => tag.name) || [];
   const [filteredTagOptions, setFilteredTagOptions] = useState(userTags);
   const [filteredGoalOptions, setFilteredGoalOptions] = useState([]);
+  const [instrumentOptions, setInstrumentOptions] = useState(
+    instrument.userInstruments
+  );
   const [tagSearch, setTagSearch] = useState("");
   const [value, setValue] = useState({
     exercise: "",
@@ -54,6 +58,7 @@ function CreateSessionPage() {
     durationTime: 0,
     durationFormat: "",
     tags: "",
+    description: "",
   });
   const [showModal, setShowModal] = useState(false);
   const [modalInfo, setModalInfo] = useState({
@@ -114,6 +119,7 @@ function CreateSessionPage() {
       durationTime,
       durationFormat,
       tags,
+      description,
     } = value;
     // Validate values
     if (!instrumentValue.length) {
@@ -218,6 +224,7 @@ function CreateSessionPage() {
         tempo,
         duration,
         tags,
+        description,
       };
 
       dispatch(createSession(payload));
@@ -400,6 +407,17 @@ function CreateSessionPage() {
   }, [value]);
 
   useEffect(() => {
+    if (instrument.userInstruments.length) {
+      const instrumentNames = instrument.userInstruments.map(
+        (inst) => inst.name
+      );
+      setInstrumentOptions(instrumentNames);
+    } else {
+      setInstrumentOptions([]);
+    }
+  }, [instrument]);
+
+  useEffect(() => {
     dispatch(getUserInstruments());
     dispatch(getUserTags());
     dispatch(getUserGoals());
@@ -431,13 +449,16 @@ function CreateSessionPage() {
           <FormField name="instrument" htmlFor="instrument" label="Instrument">
             <Select
               name="instrument"
-              options={
-                instrument.userInstruments.map((inst) => inst.name) || []
-              }
+              options={instrumentOptions}
+              placeholder="Select instrument"
             />
           </FormField>
           <FormField name="goal" htmlFor="goal" label="Goal">
-            <Select name="goal" options={filteredGoalOptions} />
+            <Select
+              name="goal"
+              options={filteredGoalOptions}
+              placeholder="Select goal"
+            />
           </FormField>
           <FormField name="exercise" htmlFor="exercise" label="Session Name">
             <TextInput name="exercise" />
@@ -464,6 +485,7 @@ function CreateSessionPage() {
             >
               <Select
                 name="durationFormat"
+                placeholder="days/hours/minutes/etc."
                 options={[
                   "minutes",
                   "hours",
@@ -475,6 +497,17 @@ function CreateSessionPage() {
               />
             </FormField>
           </Box>
+          <FormField
+            htmlFor="description"
+            name="description"
+            label="Description"
+          >
+            <TextArea
+              name="description"
+              placeholder="Add description/notes to session"
+              value={value.description}
+            />
+          </FormField>
           <Box direction="row">
             <FormField htmlFor="tags" name="tags" label="Add Tags">
               <Select

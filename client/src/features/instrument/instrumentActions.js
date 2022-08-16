@@ -35,7 +35,7 @@ export const resetInstrumentSubmissionStatus = createAsyncThunk(
 );
 
 export const getUserInstruments = createAsyncThunk(
-  "instrument/findUserGoals",
+  "instrument/findUserInstruments",
   async (_, { getState }) => {
     try {
       const { user } = getState();

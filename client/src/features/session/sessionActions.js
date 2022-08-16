@@ -5,7 +5,7 @@ import { handleActionError } from "../../utils/handleActionError";
 export const createSession = createAsyncThunk(
   "session/create",
   async (
-    { exercise, goalId, instrumentId, tempo, duration, tags },
+    { exercise, goalId, instrumentId, tempo, duration, tags, description },
     { getState }
   ) => {
     const { user } = getState();
@@ -19,7 +19,16 @@ export const createSession = createAsyncThunk(
 
     const res = await axios.post(
       "/api/practiceitems",
-      { exercise, goalId, userId, instrumentId, tempo, duration, tags },
+      {
+        exercise,
+        goalId,
+        userId,
+        instrumentId,
+        tempo,
+        duration,
+        tags,
+        description,
+      },
       config
     );
     return res.data;
@@ -54,37 +63,16 @@ export const getUserSessions = createAsyncThunk(
 
 export const setSession = createAsyncThunk(
   "session/set",
-  async (session, { rejectWithValue }) => {
-    try {
-      // If Session object is passed
-      const sessionKeys = Object.keys(session);
-      const acceptedKeys = [
-        "createdAt",
-        "id",
-        "userId",
-        "goalId",
-        "instrumentId",
-        "exercise",
-        "tempo",
-        "duration",
-        "tags",
-      ];
-      // Verify session
-      if (sessionKeys.length !== acceptedKeys.length) {
-        rejectWithValue();
-      } else {
-        const verify = sessionKeys.every((key) => {
-          return acceptedKeys.indexOf(key) !== -1;
-        });
-        if (verify) {
-          return session;
-        } else {
-          rejectWithValue();
-        }
-      }
-    } catch (error) {
-      const message = handleActionError(error);
-      return message;
-    }
+  async (sessionId, { getState }) => {
+    const { user } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    };
+
+    const res = await axios.get(`/api/practiceitems/${sessionId}`, config);
+    return res.data;
   }
 );

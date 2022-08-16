@@ -32,7 +32,10 @@ function Modal({ heading, subtitle, content, footer, status, onClose }) {
               </Heading>
             </Box>
             <Box justify="center">
-              <Button icon={<FormClose />} onClick={onClose} />
+              <Button
+                icon={<FormClose color="status-critical" />}
+                onClick={onClose}
+              />
             </Box>
           </Box>
           {subtitle && <Text size="small">{subtitle}</Text>}
@@ -66,7 +69,7 @@ function Modal({ heading, subtitle, content, footer, status, onClose }) {
 
 Modal.propTypes = {
   heading: PropTypes.string.isRequired,
-  subtitle: PropTypes.string,
+  subtitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   content: PropTypes.element.isRequired,
   footer: PropTypes.string,
   status: PropTypes.string.isRequired,

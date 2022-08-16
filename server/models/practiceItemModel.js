@@ -18,6 +18,10 @@ module.exports = (sequelize, Sequelize) => {
     tags: {
       type: Sequelize.ARRAY(Sequelize.STRING),
     },
+    description: {
+      type: Sequelize.STRING(65535),
+      allowNull: true,
+    },
     goalId: {
       type: Sequelize.INTEGER,
       required: true,
