@@ -14,6 +14,7 @@ import {
   Select,
   Spinner,
   Text,
+  TextArea,
 } from "grommet";
 import { FormAdd } from "grommet-icons";
 import { largePad, sizePad, formStyle } from "../../styles/utils";
@@ -50,6 +51,7 @@ function CreateGoalPage() {
     durationTime: 0,
     durationFormat: "",
     tags: "",
+    description: "",
   });
   const [showModal, setShowModal] = useState(false);
   const [modalInfo, setModalInfo] = useState({
@@ -109,6 +111,7 @@ function CreateGoalPage() {
       durationTime,
       durationFormat,
       tags,
+      description,
     } = value;
     // Validate values
     if (!instrumentValue.length) {
@@ -195,6 +198,7 @@ function CreateGoalPage() {
         targetTempo: tempo,
         targetDuration,
         tags,
+        description,
       };
 
       dispatch(createGoal(payload));
@@ -390,6 +394,17 @@ function CreateGoalPage() {
               />
             </FormField>
           </Box>
+          <FormField
+            htmlFor="description"
+            name="description"
+            label="Description"
+          >
+            <TextArea
+              name="description"
+              placeholder="Add description to goal"
+              value={value.description}
+            />
+          </FormField>
           <Box direction="row">
             <FormField htmlFor="tags" name="tags" label="Add Tags">
               <Select

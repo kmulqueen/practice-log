@@ -5,7 +5,7 @@ import { handleActionError } from "../../utils/handleActionError";
 export const createGoal = createAsyncThunk(
   "goal/create",
   async (
-    { instrumentId, name, targetTempo, targetDuration, tags },
+    { instrumentId, name, targetTempo, targetDuration, tags, description },
     { getState }
   ) => {
     try {
@@ -19,7 +19,7 @@ export const createGoal = createAsyncThunk(
 
       const res = await axios.post(
         "/api/goals",
-        { instrumentId, name, targetTempo, targetDuration, tags },
+        { instrumentId, name, targetTempo, targetDuration, tags, description },
         config
       );
       return res.data;

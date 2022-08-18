@@ -2,7 +2,18 @@ import React, { useContext, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Box, DataTable, Heading, ResponsiveContext, Tag, Text } from "grommet";
-import { InProgress, Checkmark, More } from "grommet-icons";
+import {
+  Analytics,
+  InProgress,
+  Checkmark,
+  Clock,
+  Dashboard,
+  FormSchedule,
+  More,
+  Notes,
+  Tag as TagIcon,
+  Task,
+} from "grommet-icons";
 import {
   smallPad,
   smallIcon,
@@ -11,6 +22,7 @@ import {
 } from "../../styles/utils";
 import Modal from "../Modal/Modal";
 import { getUserInstruments } from "../../features/instrument/instrumentActions";
+import { getUserSessions } from "../../features/session/sessionActions";
 import moment from "moment";
 
 function GoalsDataTable({ data, placeHolder }) {
@@ -23,6 +35,7 @@ function GoalsDataTable({ data, placeHolder }) {
     status: "",
   });
   const { userInstruments } = useSelector((state) => state.instrument);
+  const { userSessions } = useSelector((state) => state.session);
   const size = useContext(ResponsiveContext);
   const nav = useNavigate();
   const dispatch = useDispatch();
@@ -104,13 +117,18 @@ function GoalsDataTable({ data, placeHolder }) {
   }
   function formatInstrumentName(instrumentId) {
     if (typeof userInstruments === "object") {
-      const instrumentName = userInstruments.filter(
-        (instrument) => instrument.id === instrumentId
-      )[0].name;
-      if (instrumentName) {
-        return instrumentName;
+      if (instrumentId !== null && instrumentId !== undefined) {
+        let instrumentName = userInstruments.filter(
+          (instrument) => instrument.id === instrumentId
+        )[0];
+        if (instrumentName !== undefined) {
+          instrumentName = instrumentName.name;
+          return instrumentName;
+        } else {
+          return "N/A";
+        }
       } else {
-        return "N/A";
+        return "";
       }
     } else {
       return "";
@@ -135,23 +153,77 @@ function GoalsDataTable({ data, placeHolder }) {
       );
     }
   }
-  function formatStatusText(date) {
-    if (date === null) {
-      return "In Progress";
-    } else {
-      return `Completed on ${formatDate(date)}`;
-    }
-  }
+
   function formatModalContent(datum) {
     return (
       <Box direction="column" gap={smallPad[size]}>
-        <Text>Created on {formatDate(datum.createdAt)}</Text>
-        <Text>Instrument: {formatInstrumentName(datum.instrumentId)}</Text>
-        <Text>Target tempo: {datum.targetTempo} BPM</Text>
-        <Text>Target time investment: {datum.targetDuration}</Text>
-        <Text>Total time invested: {datum.totalDuration || "None"}</Text>
-        <Box direction="column" gap={smallPad[size]}>
-          <Text>Tags:</Text>
+        <Box
+          direction="row"
+          gap={smallPad[size]}
+          justify="between"
+          align="center"
+          background="background-back"
+          pad={smallPad[size]}
+          round
+        >
+          <Box direction="column" justify="center" align="center">
+            <Dashboard size={smallIcon[size]} />
+            <Text weight="bold">Target Tempo</Text>
+            <Text>{datum.targetTempo} BPM</Text>
+          </Box>
+          <Box direction="column" justify="center" align="center">
+            <Clock size={smallIcon[size]} />
+            <Text weight="bold">Goal Length</Text>
+            <Text>{datum.targetDuration}</Text>
+          </Box>
+        </Box>
+        <Box
+          direction="row"
+          gap={smallPad[size]}
+          justify="between"
+          align="center"
+          background="background-back"
+          pad={smallPad[size]}
+          round
+        >
+          <Box direction="column" justify="center" align="center">
+            <Analytics size={smallIcon[size]} />
+            <Text weight="bold">Time Practiced</Text>
+            <Text>{datum.totalDuration || "None"}</Text>
+          </Box>
+          <Box direction="column" justify="center" align="center">
+            <Task size={smallIcon[size]} />
+            <Text weight="bold">Sessions</Text>
+            <Text>
+              {
+                userSessions.filter((session) => session.goalId === datum.id)
+                  .length
+              }
+            </Text>
+          </Box>
+        </Box>
+        <Box
+          direction="column"
+          background="background-back"
+          pad={smallPad[size]}
+          round
+        >
+          <Box direction="row" gap="small" margin={{ bottom: smallPad[size] }}>
+            <Notes size={smallIcon[size]} />
+            <Text weight="bold">Description</Text>
+          </Box>
+          <Text>{datum.description}</Text>
+        </Box>
+        <Box
+          direction="column"
+          background="background-back"
+          pad={smallPad[size]}
+          round
+        >
+          <Box direction="row" gap="small" margin={{ bottom: smallPad[size] }}>
+            <TagIcon size={smallIcon[size]} />
+            <Text weight="bold">Tags</Text>
+          </Box>
           <Box direction="row" gap={smallPad[size]}>
             {datum.tags.map((tag) => (
               <Tag
@@ -163,6 +235,15 @@ function GoalsDataTable({ data, placeHolder }) {
             ))}
           </Box>
         </Box>
+      </Box>
+    );
+  }
+
+  function formatModalSubtitle(datum) {
+    return (
+      <Box direction="row" gap="small">
+        <FormSchedule />
+        <Text>Created on {formatDate(datum.createdAt)}</Text>
       </Box>
     );
   }
@@ -185,7 +266,7 @@ function GoalsDataTable({ data, placeHolder }) {
     e.stopPropagation();
     setModalInfo({
       heading: `${datum.name}`,
-      subtitle: `${formatStatusText(datum.dateCompleted)}`,
+      subtitle: formatModalSubtitle(datum),
       content: formatModalContent(datum),
       footer: "",
       status: "information",
@@ -199,6 +280,7 @@ function GoalsDataTable({ data, placeHolder }) {
 
   useEffect(() => {
     dispatch(getUserInstruments());
+    dispatch(getUserSessions());
   }, [dispatch]);
   return (
     <>

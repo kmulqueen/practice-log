@@ -4,7 +4,8 @@ const Op = db.Sequelize.Op;
 
 // CREATE
 exports.create = async (req, res) => {
-  const { instrumentId, name, targetTempo, targetDuration, tags } = req.body;
+  const { instrumentId, name, targetTempo, targetDuration, tags, description } =
+    req.body;
   if (!instrumentId) {
     return res.status(400).json({
       message: "instrumentId can not be empty.",
@@ -52,6 +53,7 @@ exports.create = async (req, res) => {
         targetTempo,
         targetDuration,
         tags,
+        description,
       };
       const goal = await Goal.create(newGoal);
       res.status(201).json(goal);

@@ -15,7 +15,7 @@ function Modal({ heading, subtitle, content, footer, status, onClose }) {
           pad="medium"
         >
           <Box justify="between" direction="row">
-            <Box flex={false} gap="small" direction="row" align="center">
+            <Box gap="small" direction="row" align="center">
               <Box justify="center">
                 {status === "ok" ? (
                   <Checkmark color={`status-${status}`} />

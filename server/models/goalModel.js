@@ -16,6 +16,10 @@ module.exports = (sequelize, Sequelize) => {
     targetTempo: {
       type: Sequelize.INTEGER,
     },
+    description: {
+      type: Sequelize.STRING(65535),
+      allowNull: true,
+    },
     totalDuration: {
       type: Sequelize.STRING,
       allowNull: true,
