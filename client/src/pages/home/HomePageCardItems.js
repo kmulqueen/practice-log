@@ -13,7 +13,7 @@ export const cardItems = [
     subtitle: "View/Manage your goals",
     icon: <Achievement size="large" color="text-strong" />,
     id: 2,
-    linkTo: "/goals/view",
+    linkTo: "/goals",
   },
   {
     title: "Sessions",

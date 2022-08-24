@@ -3,19 +3,26 @@ import {
   createGoal,
   resetGoalSubmissionStatus,
   getUserGoals,
+  setGoal,
 } from "./goalActions";
 
 export const goalSlice = createSlice({
   name: "goal",
   initialState: {
-    id: null,
-    userId: null,
-    name: "",
-    targetTempo: 0,
-    targetDuration: "0 days",
-    dateCompleted: null,
-    totalDuration: "0 days",
-    tags: [],
+    currentGoal: {
+      id: null,
+      userId: null,
+      instrumentId: null,
+      name: "",
+      description: "",
+      targetTempo: 0,
+      targetDuration: "0 days",
+      dateCompleted: null,
+      totalDuration: "0 days",
+      tags: [],
+      createdAt: "",
+      updatedAt: "",
+    },
     status: "",
     userGoals: [],
   },
@@ -44,6 +51,17 @@ export const goalSlice = createSlice({
       state.userGoals = payload;
     },
     [getUserGoals.rejected]: (state) => {
+      state.status = "error";
+    },
+    // SET GOAL
+    [setGoal.pending]: (state) => {
+      state.status = "pending";
+    },
+    [setGoal.fulfilled]: (state, { payload }) => {
+      state.status = "retrieved";
+      state.currentGoal = payload;
+    },
+    [setGoal.rejected]: (state) => {
       state.status = "error";
     },
   },

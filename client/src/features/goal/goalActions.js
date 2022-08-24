@@ -40,18 +40,48 @@ export const resetGoalSubmissionStatus = createAsyncThunk(
 export const getUserGoals = createAsyncThunk(
   "goal/findUserGoals",
   async (_, { getState }) => {
-    try {
-      const { user } = getState();
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-      const res = await axios.get(`/api/goals/user`, config);
-      return res.data;
-    } catch (error) {
-      const message = handleActionError(error);
-      return message;
+    const { user } = getState();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    };
+    const res = await axios.get(`/api/goals/user`, config);
+    return res.data;
+  }
+);
+
+export const setGoal = createAsyncThunk(
+  "goal/set",
+  async (goal, { rejectWithValue }) => {
+    // If Instrument object is passed
+    const goalKeys = Object.keys(goal);
+    const acceptedKeys = [
+      "createdAt",
+      "id",
+      "name",
+      "description",
+      "updatedAt",
+      "userId",
+      "instrumentId",
+      "targetTempo",
+      "targetDuration",
+      "dateCompleted",
+      "totalDuration",
+      "tags",
+    ];
+    // Verify instrument
+    if (goalKeys.length !== acceptedKeys.length) {
+      rejectWithValue();
+    } else {
+      const verify = goalKeys.every((key) => {
+        return acceptedKeys.indexOf(key) !== -1;
+      });
+      if (verify) {
+        return goal;
+      } else {
+        rejectWithValue();
+      }
     }
   }
 );

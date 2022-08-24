@@ -61,7 +61,7 @@ export const setInstrument = createAsyncThunk(
       const instrumentKeys = Object.keys(instrument);
       const acceptedKeys = ["createdAt", "id", "name", "updatedAt", "userId"];
       // Verify instrument
-      if (instrumentKeys.length !== 5) {
+      if (instrumentKeys.length !== acceptedKeys.length) {
         rejectWithValue();
       } else {
         const verify = instrumentKeys.every((key) => {

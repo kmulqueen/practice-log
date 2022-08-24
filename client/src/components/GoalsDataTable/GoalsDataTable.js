@@ -23,6 +23,7 @@ import {
 import Modal from "../Modal/Modal";
 import { getUserInstruments } from "../../features/instrument/instrumentActions";
 import { getUserSessions } from "../../features/session/sessionActions";
+import { setGoal } from "../../features/goal/goalActions";
 import moment from "moment";
 
 function GoalsDataTable({ data, placeHolder }) {
@@ -259,9 +260,10 @@ function GoalsDataTable({ data, placeHolder }) {
   }
   function handleNameClick(e, datum) {
     e.stopPropagation();
-    // TODO: Navigate to the goal page
-    console.log("clicked", datum);
+    dispatch(setGoal(datum));
+    nav("/goals/view");
   }
+
   function handleInformationClick(e, datum) {
     e.stopPropagation();
     setModalInfo({

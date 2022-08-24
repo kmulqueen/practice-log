@@ -27,11 +27,11 @@ function App() {
         <Route path="/sessions" exact element={<PrivateRoute />}>
           <Route path="/sessions" element={<ViewAllSessionsPage />} />
         </Route>
-        <Route path="/goals/view/:id" exact element={<PrivateRoute />}>
-          <Route path="/goals/view/:id" element={<ViewGoalPage />} />
-        </Route>
         <Route path="/goals/view" exact element={<PrivateRoute />}>
-          <Route path="/goals/view" element={<ViewAllGoalsPage />} />
+          <Route path="/goals/view" element={<ViewGoalPage />} />
+        </Route>
+        <Route path="/goals" exact element={<PrivateRoute />}>
+          <Route path="/goals" element={<ViewAllGoalsPage />} />
         </Route>
         <Route path="/goals/create" exact element={<PrivateRoute />}>
           <Route path="/goals/create" element={<CreateGoalPage />} />
